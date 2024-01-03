@@ -145,7 +145,7 @@ local function checklisting(uid, gems, item, version, shiny, amount, username, p
 
     local price = gems / amount
     task.wait(3.05)
-    if type.huge and price <= 1000000 then	
+    if type.huge and price <= 3000000 then	
         local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
         if boughtPet == true then
             ping = true
@@ -261,7 +261,7 @@ end
 
 Players.PlayerRemoving:Connect(function(player)
     PlayerInServer = #getPlayers
-    if PlayerInServer < 37 then
+    if PlayerInServer < 29 then
         jumpToServer()
     end
 end) 
