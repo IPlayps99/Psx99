@@ -155,7 +155,7 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
                 local unitGems = gems/amount
 		snipeNormal = false
                                  
-                if string.find(item, "Huge") and unitGems <= 3000000 then
+                if string.find(item, "Huge") and unitGems <= 1000000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
                 elseif snipeNormalPets == true and gems == 1 then
@@ -164,20 +164,20 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
                         return
                 elseif class == "Pet" then
                     local type = Library.Directory.Pets[item]
-                    if type.exclusiveLevel and unitGems <= 70000 and item ~= "Banana" and item ~= "Coin" then
+                    if type.exclusiveLevel and unitGems <= 60000 and item ~= "Banana" and item ~= "Coin" then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                         return
-                    elseif type.titanic and unitGems <= 200000000 then
+                    elseif type.titanic and unitGems <= 400000000 then
 			coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                         return
                     elseif type.huge and unitGems <= 3000000 then
 			coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                         return
 		    end
-                elseif (item == "Titanic Christmas Present" or string.find(item, "2024 New Year")) and unitGems <= 100000 then
+                elseif (item == "Titanic Christmas Present" or string.find(item, "2024 New Year")) and unitGems <= 150000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
-                elseif class == "Egg" and unitGems <= 500000 then
+                elseif class == "Egg" and unitGems <= 700000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
                 elseif ((string.find(item, "Key") and not string.find(item, "Lower")) or string.find(item, "Ticket") or string.find(item, "Charm") or class == "Charm") and unitGems <= 2500 then 
@@ -248,7 +248,7 @@ end
 Players.PlayerRemoving:Connect(function(player)
     getPlayers = Players:GetPlayers()
     PlayerInServer = #getPlayers
-    if PlayerInServer < 25 then
+    if PlayerInServer < 30 then
         while task.wait(1) do
 	    jumpToServer()
 	end
