@@ -1,7 +1,12 @@
 local osclock = os.clock()
-repeat task.wait() until game:IsLoaded()
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+task.wait(10) -- i hate library loading
 
 setfpscap(10)
+game.Players.LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
 game:GetService("RunService"):Set3dRenderingEnabled(false)
 local Booths_Broadcast = game:GetService("ReplicatedStorage").Network:WaitForChild("Booths_Broadcast")
 local Players = game:GetService('Players')
@@ -10,10 +15,10 @@ local PlayerInServer = #getPlayers
 local http = game:GetService("HttpService")
 local ts = game:GetService("TeleportService")
 local rs = game:GetService("ReplicatedStorage")
-local Library = require(rs:WaitForChild('Library'))
 local snipeNormal
+local Library = require(rs:WaitForChild("Library"))
 
-if not snipeNormalPets then
+if snipeNormalPets == nil then
     snipeNormalPets = false
 end
 
@@ -30,28 +35,31 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
     local weburl, webContent, webcolor
     local versionVal = { [1] = "Golden ", [2] = "Rainbow " }
     local versionStr = versionVal[version] or (version == nil and "")
-    local mention = (string.find(item, "Huge") or string.find(item, "Titanic")) and "<" .. userid .. ">" or ""
+    local mention = (Library.Directory.Pets[item].huge or Library.Directory.Pets[item].titanic) and "<@" .. userid .. ">" or ""
 	
     if boughtStatus then
 	webcolor = tonumber(0x00ff00)
-	weburl = webhook
-        snipeMessage = snipeMessage .. " just sniped a "
+        snipeMessage = snipeMessage .. " just sniped ".. amount .."x "
         webContent = mention
 	if snipeNormal == true then
 	    weburl = normalwebhook
 	    snipeNormal = false
+	else
+	    weburl = webhook
 	end
     else
-	webContent = failMessage
 	webcolor = tonumber(0xff0000)
 	weburl = webhookFail
-	snipeMessage = snipeMessage .. " failed to snipe a "
+	snipeMessage = snipeMessage .. " failed to snipe ".. amount .."x "
 	if snipeNormal == true then
-	    weburl = normalwebhook
 	    snipeNormal = false
 	end
     end
-    
+
+    if not failMessage then
+	failMessage = "Success!"
+    end
+	
     snipeMessage = snipeMessage .. "**" .. versionStr
     
     if shiny then
@@ -101,7 +109,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
         }
     }
 
-    local jsonMessage = http:JSONEncode(message1)
+ local jsonMessage = http:JSONEncode(message1)
     local success, webMessage = pcall(function()
 	http:PostAsync(weburl, jsonMessage)
     end)
@@ -119,7 +127,7 @@ end
 
 local function tryPurchase(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
     if buytimestamp > listTimestamp then
-      task.wait(3.4 - Players.LocalPlayer:GetNetworkPing())
+	task.wait(buytimestamp - workspace:GetServerTimeNow() - Players.LocalPlayer:GetNetworkPing())
     end
     local boughtPet, boughtMessage = game:GetService("ReplicatedStorage").Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
     processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, class, boughtMessage, snipeNormal)
@@ -206,7 +214,7 @@ local function jumpToServer()
     local sfUrl = "https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=%s&limit=%s&excludeFullGames=true" 
     local req = request({ Url = string.format(sfUrl, 15502339080, "Desc", 50) }) 
     local body = http:JSONDecode(req.Body) 
-    local deep = math.random(1, 5)
+    local deep = math.random(1, 3)
     if deep > 1 then 
         for i = 1, deep, 1 do 
              req = request({ Url = string.format(sfUrl .. "&cursor=" .. body.nextPageCursor, 15502339080, "Desc", 50) }) 
@@ -230,7 +238,7 @@ local function jumpToServer()
 end
 
 if PlayerInServer < 25 then
-    while task.wait(1) do
+    while task.wait(10) do
 	jumpToServer()
     end
 end
@@ -238,7 +246,7 @@ end
 for i = 1, PlayerInServer do
    for ii = 1,#alts do
         if getPlayers[i].Name == alts[ii] and alts[ii] ~= Players.LocalPlayer.Name then
-            while task.wait(1) do
+            while task.wait(10) do
 		jumpToServer()
 	    end
         end
@@ -249,7 +257,7 @@ Players.PlayerRemoving:Connect(function(player)
     getPlayers = Players:GetPlayers()
     PlayerInServer = #getPlayers
     if PlayerInServer < 25 then
-        while task.wait(1) do
+        while task.wait(10) do
 	    jumpToServer()
 	end
     end
@@ -259,18 +267,18 @@ Players.PlayerAdded:Connect(function(player)
     for i = 1,#alts do
         if player.Name == alts[i] and alts[i] ~= Players.LocalPlayer.Name then
 	    task.wait(math.random(0, 60))
-            while task.wait(1) do
+            while task.wait(10) do
 	        jumpToServer()
 	    end
         end
     end
 end) 
 
-local hopDelay = math.random(900, 1200)
+local hopDelay = math.random(720, 960)
 
 while task.wait(1) do
     if math.floor(os.clock() - osclock) >= hopDelay then
-        while task.wait(1) do
+        while task.wait(10) do
 	    jumpToServer()		
 	end	
     end
