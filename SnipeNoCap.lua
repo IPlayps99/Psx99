@@ -19,12 +19,14 @@ local Library = require(rs:WaitForChild("Library"))
 if snipeNormalPets == nil then
     snipeNormalPets = false
 end
+
 local vu = game:GetService("VirtualUser")
 Players.LocalPlayer.Idled:connect(function()
    vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
    task.wait(1)
    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
+
 local function processListingInfo(uid, gems, item, version, shiny, amount, boughtFrom, boughtStatus, class, failMessage, snipeNormal)
     local gemamount = Players.LocalPlayer.leaderstats["💎 Diamonds"].Value
     local snipeMessage ="||".. Players.LocalPlayer.Name .. "||"
@@ -32,7 +34,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
     local versionVal = { [1] = "Golden ", [2] = "Rainbow " }
     local versionStr = versionVal[version] or (version == nil and "")
     local mention = ( class == "Pet" and (Library.Directory.Pets[item].huge or Library.Directory.Pets[item].titanic)) and "<@" .. userid .. ">" or ""
-
+	
     if boughtStatus then
 	webcolor = tonumber(0x00ff00)
         snipeMessage = snipeMessage .. " just sniped ".. amount .."x "
@@ -52,9 +54,9 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
 	    snipeNormal = false
 	end
     end
-
+	
     snipeMessage = snipeMessage .. "**" .. versionStr
-
+    
     if shiny then
         snipeMessage = snipeMessage .. " Shiny "
     end
@@ -260,6 +262,7 @@ if PlayerInServer < 30 then
 	jumpToServer()
     end
 end
+
 for i = 1, PlayerInServer do
    for ii = 1,#alts do
         if getPlayers[i].Name == alts[ii] and alts[ii] ~= Players.LocalPlayer.Name then
@@ -269,6 +272,7 @@ for i = 1, PlayerInServer do
         end
     end
 end
+
 Players.PlayerRemoving:Connect(function(player)
     getPlayers = Players:GetPlayers()
     PlayerInServer = #getPlayers
@@ -278,6 +282,7 @@ Players.PlayerRemoving:Connect(function(player)
 	end
     end
 end) 
+
 Players.PlayerAdded:Connect(function(player)
     for i = 1,#alts do
         if player.Name == alts[i] and alts[i] ~= Players.LocalPlayer.Name then
