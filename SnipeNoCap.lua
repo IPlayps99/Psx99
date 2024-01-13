@@ -41,7 +41,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
         webContent = mention
 	webStatus = "Success!"
 	weburl = webhook
-	if snipeNormal == true then
+	if snipeNormal == false then
 	    weburl = normalwebhook
 	    snipeNormal = false
 	end
@@ -50,7 +50,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
 	weburl = webhookFail
 	webStatus = failMessage
 	snipeMessage = snipeMessage .. " failed to snipe ".. amount .."x "
-	if snipeNormal == true then
+	if snipeNormal == false then
 	    snipeNormal = false
 	end
     end
@@ -128,7 +128,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
     end
 end
 
-local function tryPurchase(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
+local function tryPurchase(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipe)
     signal = game:GetService("RunService").Heartbeat:Connect(function()
 	if buytimestamp < workspace:GetServerTimeNow() then
 	    signal:Disconnect()
@@ -137,7 +137,7 @@ local function tryPurchase(uid, gems, item, version, shiny, amount, username, cl
     end)
     repeat task.wait() until signal == nil
     local boughtPet, boughtMessage = rs.Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
-    processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, class, boughtMessage, snipeNormal)
+    processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, class, boughtMessage, snipe)
 end
 
 Booths_Broadcast.OnClientEvent:Connect(function(username, message)
