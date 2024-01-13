@@ -19,14 +19,12 @@ local Library = require(rs:WaitForChild("Library"))
 if snipeNormalPets == nil then
     snipeNormalPets = false
 end
-
 local vu = game:GetService("VirtualUser")
 Players.LocalPlayer.Idled:connect(function()
    vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
    task.wait(1)
    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
-
 local function processListingInfo(uid, gems, item, version, shiny, amount, boughtFrom, boughtStatus, class, failMessage, snipeNormal)
     local gemamount = Players.LocalPlayer.leaderstats["💎 Diamonds"].Value
     local snipeMessage ="||".. Players.LocalPlayer.Name .. "||"
@@ -34,14 +32,14 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
     local versionVal = { [1] = "Golden ", [2] = "Rainbow " }
     local versionStr = versionVal[version] or (version == nil and "")
     local mention = ( class == "Pet" and (Library.Directory.Pets[item].huge or Library.Directory.Pets[item].titanic)) and "<@" .. userid .. ">" or ""
-	
+
     if boughtStatus then
 	webcolor = tonumber(0x00ff00)
         snipeMessage = snipeMessage .. " just sniped ".. amount .."x "
         webContent = mention
 	webStatus = "Success!"
 	weburl = webhook
-	if snipeNormal == false then
+	if snipeNormal == true then
 	    weburl = normalwebhook
 	    snipeNormal = false
 	end
@@ -50,13 +48,13 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
 	weburl = webhookFail
 	webStatus = failMessage
 	snipeMessage = snipeMessage .. " failed to snipe ".. amount .."x "
-	if snipeNormal == false then
+	if snipeNormal == true then
 	    snipeNormal = false
 	end
     end
-	
+
     snipeMessage = snipeMessage .. "**" .. versionStr
-    
+
     if shiny then
         snipeMessage = snipeMessage .. " Shiny "
     end
@@ -128,7 +126,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
     end
 end
 
-local function tryPurchase(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipe)
+local function tryPurchase(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
     signal = game:GetService("RunService").Heartbeat:Connect(function()
 	if buytimestamp < workspace:GetServerTimeNow() then
 	    signal:Disconnect()
@@ -137,7 +135,7 @@ local function tryPurchase(uid, gems, item, version, shiny, amount, username, cl
     end)
     repeat task.wait() until signal == nil
     local boughtPet, boughtMessage = rs.Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
-    processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, class, boughtMessage, snipe)
+    processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, class, boughtMessage, snipeNormal)
 end
 
 Booths_Broadcast.OnClientEvent:Connect(function(username, message)
@@ -230,7 +228,6 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
             end
         end
     end)
-
 local function jumpToServer() 
     local sfUrl = "https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=%s&limit=%s&excludeFullGames=true" 
     local req = request({ Url = string.format(sfUrl, 15502339080, "Desc", 50) }) 
@@ -263,7 +260,6 @@ if PlayerInServer < 30 then
 	jumpToServer()
     end
 end
-
 for i = 1, PlayerInServer do
    for ii = 1,#alts do
         if getPlayers[i].Name == alts[ii] and alts[ii] ~= Players.LocalPlayer.Name then
@@ -273,7 +269,6 @@ for i = 1, PlayerInServer do
         end
     end
 end
-
 Players.PlayerRemoving:Connect(function(player)
     getPlayers = Players:GetPlayers()
     PlayerInServer = #getPlayers
@@ -283,7 +278,6 @@ Players.PlayerRemoving:Connect(function(player)
 	end
     end
 end) 
-
 Players.PlayerAdded:Connect(function(player)
     for i = 1,#alts do
         if player.Name == alts[i] and alts[i] ~= Players.LocalPlayer.Name then
